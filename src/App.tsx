@@ -1,16 +1,27 @@
 import './App.css'
-import {FeedbackForm} from "@/components/FeedbackForm.tsx";
-import {FeedbackList} from "@/components/FeedbackList.tsx";
-import {FeedbackFilter} from "@/components/FeedbackFilter.tsx";
+import Home from "@/Pages/Home.tsx";
+import {Routes, Route} from "react-router-dom";
+import AuthContainer from "@/AuthContainer.tsx";
+import {PrivateRoute} from "@/components/PrivateRoute.tsx";
+import {useAuth} from "@/hooks/useAuth.tsx";
+import {Layout} from "@/components/Layout.tsx"
 
 function App() {
+  useAuth();
   return (
-    <div className="max-w-lg h-full mx-auto px-4 py-8 space-y-8 overflow-y-scroll scroll-thin shadow-[4px_0_10px_rgba(0,0,0,0.05),_-4px_0_10px_rgba(0,0,0,0.05)]">
-      <h1 className="text-4xl font-bold text-center">Feedback Board</h1>
-      <FeedbackForm/>
-      <FeedbackFilter />
-      <FeedbackList/>
-    </div>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="/*" element={<AuthContainer />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+      </Route>
+    </Routes>
   )
 }
 
