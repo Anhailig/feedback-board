@@ -1,0 +1,18 @@
+.scroll-thin::-webkit-scrollbar {
+    width: 2px;
+    height: 2px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+    background-color: rgba(100, 100, 100, 0.3);
+    border-radius: 2px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+    background: transparent;
+}
+.scroll-thin::-webkit-scrollbar-button {
+    display: none;
+}
+.scroll-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(100, 100, 100, 0.3) transparent;
+}
