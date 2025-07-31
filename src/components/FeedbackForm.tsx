@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { feedbackSchema, type FeedbackFormValues } from '@/types/feedbackSchema';
+import { feedbackSchema, type FeedbackFormValues } from '@/types/schema.ts';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -12,10 +12,15 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { useFeedbackStore } from '@/store/useFeedbackStore';
+import {postFeedback} from "@/lib/supabaseApi.ts";
+import {Loader2Icon} from "lucide-react";
 
-export const FeedbackForm = () => {
-  const addFeedback = useFeedbackStore((s) => s.addFeedback);
+type FeedbackFormProps = {
+  onSuccess?: () => void;
+  loading?: boolean;
+};
+
+export const FeedbackForm = ({ onSuccess, loading }: FeedbackFormProps) => {
 
   const form = useForm<FeedbackFormValues>({
     resolver: zodResolver(feedbackSchema),
@@ -26,13 +31,14 @@ export const FeedbackForm = () => {
     },
   });
 
-  const onSubmit = (data: FeedbackFormValues) => {
-    addFeedback(data.title, data.description, data.category);
-    form.reset({
-      title: '',
-      description: '',
-      category: undefined,
-    });
+  const onSubmit = async (data: FeedbackFormValues) => {
+    try {
+      await postFeedback(data);
+      form.reset({ title: '', description: '', category: undefined });
+      if (onSuccess) onSuccess();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -67,8 +73,8 @@ export const FeedbackForm = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {['Bug', 'Feature', 'Other'].map((it) => (
-                      <SelectItem className='cursor-pointer' value={it}>{it}</SelectItem>
+                    {['Bug', 'Feature', 'Other'].map((it, index) => (
+                      <SelectItem key={index} className='cursor-pointer' value={it}>{it}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -95,7 +101,18 @@ export const FeedbackForm = () => {
           )}
         />
         <div className='w-full flex justify-center'>
-          <Button className='cursor-pointer min-w-40 py-6 text-base' type="submit" variant='default'>Add feedback</Button>
+          <Button className='cursor-pointer min-w-40 py-6 text-base' type="submit" variant='default' disabled={loading}>
+            {loading ? (
+              <>
+                <Loader2Icon className="animate-spin" />
+                Please wait...
+              </>
+            ) : (
+              <>
+                Add feedback
+              </>
+            )}
+          </Button>
         </div>
       </form>
     </Form>
