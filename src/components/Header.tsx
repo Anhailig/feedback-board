@@ -13,7 +13,7 @@ export default function Header() {
   };
 
   return (
-    <div className="fixed top-0 left-0 z-50 w-full min-h-14 bg-white flex justify-center p-2 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
+    <div className="w-full min-h-14 bg-white flex justify-center p-2 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)]">
       <div className="w-full max-w-xl flex justify-between items-center">
         <h1 className="text-xl font-bold text-center">Feedback Board</h1>
         {user && (
