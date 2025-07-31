@@ -1,46 +1,40 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form.tsx';
 import supabase from '@/lib/supabase.ts';
-
-const registrationSchema = z.object({
-  username: z.string().min(3, 'Username must be at least 3 characters'),
-  email: z.email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
-});
-
-type RegistrationFormValues = z.infer<typeof registrationSchema>;
+import {type RegistrationFormValues, registrationSchema} from "@/types/schema.ts";
+import { toast } from "sonner"
+import {useState} from "react";
+import {Loader2Icon} from "lucide-react";
 
 export const Registration = () => {
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
-      username: '',
       email: '',
       password: '',
     },
   });
 
   const onSubmit = async (values: RegistrationFormValues) => {
-    const { email, password, username } = values;
+    const { email, password } = values;
 
+    setLoading(true)
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: {
-          username,
-        },
-      },
     });
 
     if (error) {
       console.error('Registration error:', error);
+    } else {
+      toast.success('Registration successful! Check your email to confirm your account');
     }
+    setLoading(false);
 
     form.reset();
   };
@@ -48,20 +42,6 @@ export const Registration = () => {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="username"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Username</FormLabel>
-              <FormControl>
-                <Input placeholder="Your username" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="email"
@@ -75,7 +55,6 @@ export const Registration = () => {
             </FormItem>
           )}
         />
-
         <FormField
           control={form.control}
           name="password"
@@ -89,8 +68,18 @@ export const Registration = () => {
             </FormItem>
           )}
         />
-
-        <Button type="submit" className="w-full">Sign Up</Button>
+        <Button type="submit" className="w-full cursor-pointer" disabled={loading}>
+          {loading ? (
+            <>
+              <Loader2Icon className="animate-spin" />
+              Please wait...
+            </>
+          ) : (
+            <>
+              Sign Up
+            </>
+          )}
+        </Button>
       </form>
     </Form>
   );

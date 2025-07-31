@@ -5,5 +5,5 @@ export interface FeedbackItem {
   title: string;
   description: string;
   category: FeedbackCategory;
-  createdAt: number;
+  created_at: number;
 }

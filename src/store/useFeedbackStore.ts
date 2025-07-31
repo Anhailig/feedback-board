@@ -18,7 +18,7 @@ export const useFeedbackStore = create<FeedbackStore>((set) => ({
       title,
       description,
       category,
-      createdAt: Date.now(),
+      created_at: Date.now(),
     };
     set((state) => ({
       feedbacks: [newItem, ...state.feedbacks],

@@ -5,7 +5,7 @@ export const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useAuthStore((state) => state.user);
 
   if (!user) {
-    return <Navigate to="/auth/login" />;
+    return <Navigate to="login" />;
   }
 
   return <>{children}</>;

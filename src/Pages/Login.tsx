@@ -1,6 +1,5 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Input } from '@/components/ui/input.tsx';
 import { Button } from '@/components/ui/button.tsx';
 import {
@@ -13,13 +12,7 @@ import {
 } from '@/components/ui/form.tsx';
 import supabase from '@/lib/supabase.ts';
 import { useNavigate } from 'react-router-dom';
-
-const loginSchema = z.object({
-  email: z.email(),
-  password: z.string().min(6),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import {type LoginFormValues, loginSchema} from "@/types/schema.ts";
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -44,6 +37,7 @@ export const Login = () => {
       navigate('/');
     } else {
       form.setError('email', { message: error.message });
+      form.setError('password', { message: error.message });
     }
   };
 
@@ -78,9 +72,7 @@ export const Login = () => {
           )}
         />
 
-        <div className="w-full flex justify-center">
-          <Button className="min-w-40 py-6 text-base" type="submit">Login</Button>
-        </div>
+        <Button className="w-full text-base" type="submit">Login</Button>
       </form>
     </Form>
   );
